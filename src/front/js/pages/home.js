@@ -35,7 +35,7 @@ export const Home = () => {
 
     //Ahora envío la petición con la lista de To Do modificada, y espero la respuesta del servidor
     let { respuestaJson, response } = await actions.useFetch(
-      `/todos/user/${user}`,
+      `/todos/user/josewilmerDR`,
       arrTemp,
       "PUT"
     );

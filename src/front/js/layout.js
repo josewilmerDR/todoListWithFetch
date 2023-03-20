@@ -27,7 +27,7 @@ const Layout = () => {
         <ScrollToTop>
           <Navbar />
           <Routes>
-            <Route element={<Home />} path="/" />
+            {/* <Route element={<Home />} path="/" /> */}
             <Route element={<ToDo />} path="/" />
             <Route element={<StarWars />} path="/" />
             <Route element={<Demo />} path="/demo" />
