@@ -68,6 +68,7 @@ export function todoActions(getStore, getActions, setStore) {
       if (response.ok) {
         //Si la respuesta es positiva entonces se modificó en el backend
         console.log(response);
+        setStore({ ...store, todoList: arrTemp });
         return true; //puedo devolver true si fue correcto
       } else {
         alert("No se agregó o no hubo conexión con la API");

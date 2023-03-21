@@ -60,6 +60,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 
         return { respuestaJson, response };
       },
+
       useFetchParalelo: (endpoint, body, method = "GET") => {
         let url = process.env.BACKEND_URL + endpoint;
         console.log(url);
