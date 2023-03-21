@@ -1,3 +1,7 @@
+//todoStore: Es un objeto que contiene el estado inicial de la lista de tareas pendientes (todoList)
+//y una tarea pendiente (todo) con una estructura predeterminada que incluye una etiqueta vacía
+//y un estado de "no realizado" (done: false).
+
 export const todoStore = {
   todoList: [],
   todo: {
@@ -5,71 +9,69 @@ export const todoStore = {
     done: false,
   },
 };
-//a
+
+// todoActions: Es una función que toma tres argumentos: getStore, getActions y setStore.
+// Estos argumentos son funciones proporcionadas por una biblioteca de administración de estado, en este caso, "Flux"
+// y devuelve un objeto con tres acciones asincrónicas (getToDoList, eliminarToDo y agregarToDo)
+//que interactúan con una API para obtener, eliminar y agregar tareas pendientes.
+
 export function todoActions(getStore, getActions, setStore) {
   return {
+    //getToDoList: Esta función asincrónica recupera la lista de tareas pendientes de un usuario específico de la API
+    //y actualiza el estado del almacén (store) con la nueva lista de tareas pendientes.
     getToDoList: async () => {
-      //esta función obtendrá la lista de todos
-      //Como necesito usar el useFetch que es una action, debo traermela con getAction()
       let actions = getActions();
-
-      // De igual manera como necesito usar el estado todoList y el estado user, debo traerme el store
       let store = getStore();
-
       let { respuestaJson, response } = await actions.useFetch(
-        `/todos/user/${store.user}` //${store.user} debía funcionarme con este código pero me bloque las políticas de CORS (Cross-Origin Resource Sharing)
+        `/todos/user/josewilmerDR` //puedes hacer dinámico el usuario con: ${store.user}
       );
       if (response.ok) {
         setStore({ ...store, todoList: respuestaJson });
       }
       return;
     },
+    // eliminarToDo: Esta función asincrónica toma un índice 'i' como argumento y elimina la tarea pendiente en ese
+    // índice de la lista de tareas pendientes. Luego, actualiza la lista de tareas pendientes en la API y,
+    // si la actualización tiene éxito, actualiza el estado del almacén con la nueva lista de tareas pendientes.
     eliminarToDo: async (i) => {
-      //recibo el índice como i
       let actions = getActions();
       let store = getStore();
-
       let arrTemp = store.todoList.filter((item, index) => {
         return index != i;
       });
-
-      //Ahora envío la petición con la lista de To Do modificada, y espero la respuesta del servidor
       let { respuestaJson, response } = await actions.useFetch(
-        `/todos/user/${store.user}`,
+        `/todos/user/josewilmerDR`, //Para que guncione con cualquier usuario, usa:${store.user}
         arrTemp,
         "PUT"
       );
-
       if (response.ok) {
-        //Si la respuesta es positiva entonces se modificó en el backend
         console.log(response);
-        setStore({ ...store, todoList: arrTemp }); //reenderizando el componente con lo que está efectivamente en backend
+        setStore({ ...store, todoList: arrTemp });
       } else {
         alert("No se actualizó o no hubo conexión con la API");
       }
     },
+    // agregarToDo: Esta función asincrónica toma una cadena 'tarea' como argumento y crea un nuevo objeto de tarea pendiente
+    // con la etiqueta proporcionada y un estado de "no realizado" (done: false).
+    // Luego, actualiza la lista de tareas pendientes en la API con la nueva tarea y, si la actualización tiene éxito,
+    // actualiza el estado del almacén con la nueva lista de tareas pendientes.
     agregarToDo: async (tarea) => {
       let actions = getActions();
       let store = getStore();
-
       let todoObj = {
         label: tarea,
         done: false,
       };
-      //Ahora envío la petición con la lista de To Do, y espero la respuesta del servidor
       let arrTemp = [...store.todoList, todoObj];
-      //pero dependerá de si existe ya el usuario creado:
       let { respuestaJson, response } = await actions.useFetch(
-        `/todos/user/${store.user}`,
+        `/todos/user/josewilmerDR`, //Puedes hacer la entrada generica con: ${store.user}
         arrTemp,
         "PUT"
       );
 
       if (response.ok) {
-        //Si la respuesta es positiva entonces se modificó en el backend
-        console.log(response);
         setStore({ ...store, todoList: arrTemp });
-        return true; //puedo devolver true si fue correcto
+        return true;
       } else {
         alert("No se agregó o no hubo conexión con la API");
         return false;
@@ -77,5 +79,3 @@ export function todoActions(getStore, getActions, setStore) {
     },
   };
 }
-
-//recordar importar en el Flux tanto todoStore como todoActions
