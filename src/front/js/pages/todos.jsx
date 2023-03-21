@@ -19,17 +19,43 @@ export const ToDo = () => {//Esta es la versión con estados centralizados, la r
       actions.getToDoList()
     }
     cargaDatos()
-    let limpiar = document.querySelector("#tarea")
-    limpiar.value = ""
+    // let limpiar = document.querySelector("#tarea")
+    // limpiar.value = ""
   }, [store.user, refresh]) // , el antarior código estaba en la matris de efectos. El componente se renderizará la primera vez y cada vez que el estado user o refresh cambien
 
   useEffect(() => { console.log(store.todoList) }, [store.todoList])
+
   const limpiarInput = () => {
     setInputValue("")
   }
+
   return (
     <div className="container">
       <h1 className="text-center title-todo mt-5">todos</h1>
+      {/* Eliminar Agenda */}
+      <button
+        class="btn btn-danger"
+        type="button"
+        onClick={() => {
+          if (window.confirm('¿Estás seguro que deseas eliminar todas las tareas?')) {
+            actions.eliminarAllToDo();
+          }
+        }}
+      >
+        Eliminar Todo
+      </button>
+      {/* crear agenda */}
+      <button
+        class="btn btn-success"
+        type="button"
+        onClick={() => {
+          if (window.confirm('Vas a crear una agenda nueva')) {
+            actions.createAgenda()
+          }
+        }}
+      >
+        Crear agenda
+      </button>
       <div className="container-todo">
         <div className="container-input" >
           <input placeholder="What needs to be done" id="tarea"

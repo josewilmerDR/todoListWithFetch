@@ -51,6 +51,25 @@ export function todoActions(getStore, getActions, setStore) {
         alert("No se actualizó o no hubo conexión con la API");
       }
     },
+
+    eliminarAllToDo: async () => {
+      let actions = getActions();
+      let store = getStore();
+
+      // Cambiar el método a "DELETE" y actualizar la ruta de la API si es necesario
+      let { respuestaJson, response } = await actions.useFetch(
+        `/todos/user/josewilmerDR`, // Para que funcione con cualquier usuario, usa: ${store.user}
+        null,
+        "DELETE"
+      );
+
+      if (response.ok) {
+        console.log(response);
+        setStore({ ...store, todoList: [] }); // Vaciar el array en el almacén
+      } else {
+        alert("No se eliminaron las tareas o no hubo conexión con la API");
+      }
+    },
     // agregarToDo: Esta función asincrónica toma una cadena 'tarea' como argumento y crea un nuevo objeto de tarea pendiente
     // con la etiqueta proporcionada y un estado de "no realizado" (done: false).
     // Luego, actualiza la lista de tareas pendientes en la API con la nueva tarea y, si la actualización tiene éxito,
@@ -71,6 +90,30 @@ export function todoActions(getStore, getActions, setStore) {
 
       if (response.ok) {
         setStore({ ...store, todoList: arrTemp });
+        return true;
+      } else {
+        alert("No se agregó o no hubo conexión con la API");
+        return false;
+      }
+    },
+
+    createAgenda: async (tarea) => {
+      let actions = getActions();
+      let store = getStore();
+      let todoObj = {
+        label: tarea,
+        done: false,
+      };
+      let arrTemp = [...store.todoList, todoObj];
+      let { respuestaJson, response } = await actions.useFetch(
+        `/todos/user/josewilmerDR`, //Puedes hacer la entrada generica con: ${store.user}
+        arrTemp,
+        "POST"
+      );
+
+      if (response.ok) {
+        setStore({ ...store, todoList: arrTemp });
+        await actions.getToDoList();
         return true;
       } else {
         alert("No se agregó o no hubo conexión con la API");
